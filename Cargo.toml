@@ -3,7 +3,10 @@ name = "bobo"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[profile.release]
+strip = true    # Automatically strip symbols from the binary.
+opt-level = "z" # Optimize for size.
+lto = true      # Optimize at the link stage.
 
 [dependencies]
 axum = { version = "0.6.10", features = ["macros"] }
