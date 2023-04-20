@@ -1,7 +1,7 @@
 mod request_logging;
 
 use axum::Router;
-use log::{debug, error, info, log_enabled, Level};
+use log::{debug, info};
 use notify::Watcher;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::PathBuf;
