@@ -146,6 +146,21 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bef38d45163c2f1dde094a7dfd33ccf595c92905c8f8f4fdc18d06fb1037718a"
 
 [[package]]
+name = "bobo"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "clap",
+ "env_logger",
+ "log",
+ "notify",
+ "tokio",
+ "tower",
+ "tower-http",
+ "tower-livereload",
+]
+
+[[package]]
 name = "bytes"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -746,21 +761,6 @@ dependencies = [
  "itoa",
  "ryu",
  "serde",
-]
-
-[[package]]
-name = "serve-rs"
-version = "0.1.0"
-dependencies = [
- "axum",
- "clap",
- "env_logger",
- "log",
- "notify",
- "tokio",
- "tower",
- "tower-http",
- "tower-livereload",
 ]
 
 [[package]]
