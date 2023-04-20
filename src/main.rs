@@ -1,4 +1,7 @@
+mod request_logging;
+
 use axum::Router;
+use log::{debug, error, info, log_enabled, Level};
 use notify::Watcher;
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::PathBuf;
@@ -7,7 +10,7 @@ use tower_livereload::LiveReloadLayer;
 
 use clap::Parser;
 
-static IP_ADDR: IpAddr = IpAddr::V4(Ipv4Addr::from("0.0.0.0"));
+static IP_ADDR: IpAddr = IpAddr::V4(Ipv4Addr::new(0, 0, 0, 0));
 
 /// Simple HTTP server for static files with live reload capabilities.
 #[derive(Parser, Debug)]
@@ -24,20 +27,30 @@ struct Arguments {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    env_logger::init();
+
     let arguments = Arguments::parse();
-    println!("{:?}", arguments);
+    debug!("Initializing server with arguments: {:?}", arguments);
 
     let live_reload_layer = LiveReloadLayer::new();
     let reloader = live_reload_layer.reloader();
 
     let app = Router::new()
         .nest_service("/", ServeDir::new(&arguments.directory))
+        .layer(request_logging::LogLayer::default())
         .layer(live_reload_layer);
 
     let mut watcher = notify::recommended_watcher(move |_| reloader.reload())?;
     watcher.watch(&arguments.directory, notify::RecursiveMode::Recursive)?;
 
+    info!(
+        "Serving static files from directory: {}",
+        &arguments.directory.display()
+    );
+
     let socket_addr = SocketAddr::new(IP_ADDR, arguments.port);
+    info!("Listening on {}", socket_addr);
+
     axum::Server::bind(&socket_addr)
         .serve(app.into_make_service())
         .await?;
